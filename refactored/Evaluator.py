@@ -5,17 +5,16 @@ import numpy as np
 
 
 class Evaluator:
-    def __init__(self, rounds, model, trainer: Trainer):
+    def __init__(self, rounds, trainer: Trainer):
         self.rounds = rounds
         self.env = make("connectx")
-        self.model = model
         self.trainer = trainer
 
     def agent(self, observation, configuration):
         with torch.no_grad():
             state = torch.tensor(observation['board'], dtype=torch.float)
             reshaped = self.trainer.reshape(state)
-            action = self.trainer.takeAction(self.model(reshaped)[0], reshaped, 0, False)
+            action = self.trainer.takeAction(self.trainer.policy(reshaped)[0], reshaped, 0, False)
             return action
 
     def winPercentage(self):

@@ -8,15 +8,15 @@ from ExperienceBuffer import ExperienceReplay
 from kaggle_environments import make
 
 
-
-
 class Trainer:
-    def __init__(self, hidden_dim, buffer_size, gamma, device):
+    def __init__(self, hidden_dim, buffer_size, gamma, batch_size, device):
         self.env = make("connectx")
         self.device = device
-        self.policy = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim, self.env.configuration.columns).to(
+        self.policy = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
+                          self.env.configuration.columns).to(
             device)
-        self.target = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim, self.env.configuration.columns).to(
+        self.target = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
+                          self.env.configuration.columns).to(
             device)
         self.target.load_state_dict(self.policy.state_dict())
         self.target.eval()
@@ -25,20 +25,45 @@ class Trainer:
         self.loss_function = nn.MSELoss()
         self.optimizer = optim.Adam(params=self.policy.parameters(), lr=0.01)
         self.gamma = gamma
+        self.batch_size = batch_size
+
+    def synchronize(self):
+        self.target.load_state_dict(self.policy.state_dict())
+
+    def save(self):
+        torch.save(self.policy.state_dict(), "model_state")
+
+    def reset(self):
+        self.env.reset()
+        return self.trainingPair.reset()
+
+    def step(self, action):
+        return self.trainingPair.step(action)
+
+    def addExperience(self, experience):
+        self.buffer.append(experience)
+
+    def epsilon(self, maxE, minE, episode, lastEpisode):
+        (maxE - minE) * max((lastEpisode - episode) / lastEpisode, 0) + minE
 
     def change_reward(self, reward, done, board):
-        if done and reward is 1:
+        if done and reward == 1:
             return 10
-        if done and reward is -1:
+        if done and reward == -1:
             return -10
         if done:
             return 1
         if reward is None:
             return -20
-        if reward is 0:
+        if reward == 0:
             return 1 / 42
         else:
             return reward
+
+    def policyAction(self, board, episode, lastEpisode, minEp=0.1, maxEp=0.9):
+        reshaped = self.reshape(torch.tensor(board))
+        output = self.policy(reshaped)
+        return self.takeAction(output, reshaped, self.epsilon(maxEp, minEp, episode, lastEpisode))
 
     def takeAction(self, actionList: torch.tensor, board, epsilon, train=True):
         if (np.random.random() < epsilon) & train:
@@ -77,16 +102,15 @@ class Trainer:
         target = reward + ((self.gamma * target) * (1 - done))
         return target
 
-    def train(self, batchSize):
-        if len(self.buffer) > batchSize:
+    def train(self):
+        if len(self.buffer) > self.batch_size:
             self.optimizer.zero_grad()
-            states, actions, rewards, next_states, dones = self.buffer.sample(batchSize, self.device)
+            states, actions, rewards, next_states, dones = self.buffer.sample(self.batch_size, self.device)
             loss = 0
-            for i in range(batchSize):
+            for i in range(self.batch_size):
                 value = self.trainActionFromPolicy(states[i], actions[i])
                 target = self.trainActionFromPolicy(next_states[i], dones[i])
                 loss += self.loss_function(value, target)
             loss.backward()
             self.optimizer.step()
             return loss
-
