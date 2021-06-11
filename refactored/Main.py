@@ -35,7 +35,8 @@ for e in range(episodes):
         trainer.save()
         print("episode: " + str(e) + " meanReward generateEpisodes: " + str(batchReward) + " meanLoss: " + str(loss))
         print("steps: " + str(steps))
-        evaluator = Evaluator(100, trainer)
-        evaluator.winPercentage()
         with torch.no_grad():
             print(trainer.policy(trainer.reshape(torch.tensor(trainer.reset().board)))[0])
+        evaluator = Evaluator(100, trainer)
+        evaluator.winPercentage()
+

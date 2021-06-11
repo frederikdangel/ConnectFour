@@ -15,6 +15,7 @@ class Trainer:
         self.policy = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
                           self.env.configuration.columns).to(
             device)
+
         self.target = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
                           self.env.configuration.columns).to(
             device)
@@ -23,7 +24,7 @@ class Trainer:
         self.buffer = ExperienceReplay(buffer_size)
         self.trainingPair = self.env.train([None, "random"])
         self.loss_function = nn.MSELoss()
-        self.optimizer = optim.Adam(params=self.policy.parameters(), lr=0.01)
+        self.optimizer = optim.Adam(params=self.policy.parameters(), lr=0.001)
         self.gamma = gamma
         self.batch_size = batch_size
 
