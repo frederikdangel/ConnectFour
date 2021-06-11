@@ -10,7 +10,7 @@ from kaggle_environments import make
 
 class Trainer:
     def __init__(self, hidden_dim, buffer_size, gamma, batch_size, device):
-        self.env = make("connectx")
+        self.env = make("connectx", debug=True)
         self.device = device
         self.policy = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
                           self.env.configuration.columns).to(
@@ -26,6 +26,9 @@ class Trainer:
         self.optimizer = optim.Adam(params=self.policy.parameters(), lr=0.01)
         self.gamma = gamma
         self.batch_size = batch_size
+
+    def load(self):
+        self.policy.load_state_dict(torch.load("model_state"))
 
     def synchronize(self):
         self.target.load_state_dict(self.policy.state_dict())
@@ -44,31 +47,31 @@ class Trainer:
         self.buffer.append(experience)
 
     def epsilon(self, maxE, minE, episode, lastEpisode):
-        (maxE - minE) * max((lastEpisode - episode) / lastEpisode, 0) + minE
+        return (maxE - minE) * max((lastEpisode - episode) / lastEpisode, 0) + minE
 
     def change_reward(self, reward, done, board):
         if done and reward == 1:
             return 10
         if done and reward == -1:
             return -10
+        if reward is None and done:
+            return -20
         if done:
             return 1
-        if reward is None:
-            return -20
         if reward == 0:
-            return 1 / 42
+            return 1/42
         else:
             return reward
 
     def policyAction(self, board, episode, lastEpisode, minEp=0.1, maxEp=0.9):
         reshaped = self.reshape(torch.tensor(board))
-        output = self.policy(reshaped)
+        output = self.policy(reshaped).view(-1)
         return self.takeAction(output, reshaped, self.epsilon(maxEp, minEp, episode, lastEpisode))
 
     def takeAction(self, actionList: torch.tensor, board, epsilon, train=True):
         if (np.random.random() < epsilon) & train:
             # invalide actions rein=geht nicht
-            # return torch.tensor(np.random.choice(len(actionList))).item()
+            #return torch.tensor(np.random.choice(len(actionList))).item()
             return np.random.choice([i for i in range(len(actionList)) if board[0][0][0][i] == 1])
         else:
             for i in range(7):
@@ -86,31 +89,31 @@ class Trainer:
         return b.float().to(self.device)
 
     def preprocessState(self, state):
-        state = self.reshape(state, False)
-        # state = torch.stack(state)
+        state = self.reshape(torch.tensor(state), True)
         return state
 
     def trainActionFromPolicy(self, state, action):
         state = self.preprocessState(state)
-        value = self.policy(state)
-        return value[action]
+        value = self.policy(state).view(-1).to(self.device)
+        return value[action].to(self.device)
 
     def trainActionFromTarget(self, next_state, reward, done):
         next_state = self.preprocessState(next_state)
         target = self.target(next_state)
         target = torch.max(target, 1)[0].item()
         target = reward + ((self.gamma * target) * (1 - done))
-        return target
+        return torch.tensor(target).to(self.device)
 
     def train(self):
         if len(self.buffer) > self.batch_size:
             self.optimizer.zero_grad()
             states, actions, rewards, next_states, dones = self.buffer.sample(self.batch_size, self.device)
-            loss = 0
+            meanLoss = 0
             for i in range(self.batch_size):
                 value = self.trainActionFromPolicy(states[i], actions[i])
-                target = self.trainActionFromPolicy(next_states[i], dones[i])
-                loss += self.loss_function(value, target)
-            loss.backward()
+                target = self.trainActionFromTarget(next_states[i], rewards[i], dones[i])
+                loss = self.loss_function(value, target)
+                loss.backward()
+                meanLoss += loss
             self.optimizer.step()
-            return loss
+            return meanLoss/self.batch_size

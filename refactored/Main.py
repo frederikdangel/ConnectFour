@@ -2,6 +2,7 @@ import torch
 from Trainer import Trainer
 from ExperienceBuffer import Experience
 from Evaluator import Evaluator
+from kaggle_environments import make
 
 episodes = 2000
 batch_size = 32
@@ -20,16 +21,17 @@ for e in range(episodes):
     while not done:
         action = trainer.policyAction(observation.board, e, epsilon_min_after)
         old_obs = observation
-        observation, reward, done, _ = trainer.step(action)
+        observation, reward, done, _ = trainer.step(int(action))
         reward = trainer.change_reward(reward, done, None)
         next_state = observation.board
-        exp = Experience(old_obs.board, action, reward, next_state, float(done))
+        exp = Experience(old_obs.board, action, reward, next_state, int(done))
         trainer.addExperience(exp)
         batchReward += reward
         loss = trainer.train()
         steps += 1
     if e % 20 == 0:
         trainer.synchronize()
+    if e % 20 == 0:
         trainer.save()
         print("episode: " + str(e) + " meanReward generateEpisodes: " + str(batchReward) + " meanLoss: " + str(loss))
         print("steps: " + str(steps))
