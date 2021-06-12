@@ -27,15 +27,20 @@ class Trainer:
         self.optimizer = optim.Adam(params=self.policy.parameters(), lr=0.001)
         self.gamma = gamma
         self.batch_size = batch_size
+        self.enemy = "random"
+
+    def switch(self):
+        self.trainingPair = self.env.train([None, "negamax"])
+        self.enemy = "negamax"
 
     def load(self):
-        self.policy.load_state_dict(torch.load("model_state"))
+        self.policy.load_state_dict(torch.load("../model_state"))
 
     def synchronize(self):
         self.target.load_state_dict(self.policy.state_dict())
 
-    def save(self):
-        torch.save(self.policy.state_dict(), "model_state")
+    def save(self, name):
+        torch.save(self.policy.state_dict(), name)
 
     def reset(self):
         self.env.reset()

@@ -4,15 +4,15 @@ from ExperienceBuffer import Experience
 from Evaluator import Evaluator
 from kaggle_environments import make
 
-episodes = 2000
+episodes = 100000
 batch_size = 32
-discount = 0.99
+discount = 0.8
 hidden_dim = 300
 experienceSize = 20000
-epsilon_min_after = 1000
+epsilon_min_after = 1500
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 trainer = Trainer(hidden_dim, experienceSize, discount, batch_size, device)
-
+trainer.switch()
 for e in range(episodes):
     observation = trainer.reset()
     done = False
@@ -29,10 +29,10 @@ for e in range(episodes):
         batchReward += reward
         loss = trainer.train()
         steps += 1
-    if e % 20 == 0:
+    if e % 50 == 0:
         trainer.synchronize()
-    if e % 20 == 0:
-        trainer.save()
+    if e % 500 == 0:
+        trainer.save("model_state")
         print("episode: " + str(e) + " meanReward generateEpisodes: " + str(batchReward) + " meanLoss: " + str(loss))
         print("steps: " + str(steps))
         with torch.no_grad():
@@ -40,3 +40,6 @@ for e in range(episodes):
         evaluator = Evaluator(100, trainer)
         evaluator.winPercentage()
 
+    if e % 25000 == 0:
+        trainer.switch()
+        trainer.save("model_state_"+str(e))
