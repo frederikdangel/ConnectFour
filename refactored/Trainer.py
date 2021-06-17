@@ -28,10 +28,19 @@ class Trainer:
         self.gamma = gamma
         self.batch_size = batch_size
         self.enemy = "random"
+        self.first = True
 
     def switch(self):
         self.trainingPair = self.env.train([None, "negamax"])
         self.enemy = "negamax"
+
+    def switchPosition(self):
+        self.env.reset()
+        if self.first:
+            self.trainingPair = self.env.train(["random", None])
+        else:
+            self.trainingPair = self.env.train([None, "random"])
+        self.first = not self.first
 
     def load(self):
         self.policy.load_state_dict(torch.load("../model_state"))
