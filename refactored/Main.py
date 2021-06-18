@@ -4,10 +4,12 @@ from ExperienceBuffer import Experience
 from Evaluator import Evaluator
 from kaggle_environments import make
 from torch.utils.tensorboard import SummaryWriter
-
+import time
 
 
 def run(episodes, discount, useStreak):
+    start_time = time.time()
+    print('run with: ' + str(discount) + str(useStreak))
     batch_size = 32
     hidden_dim = 300
     experienceSize = 20000
@@ -53,19 +55,21 @@ def run(episodes, discount, useStreak):
             firstStep = str(trainer.policy(trainer.reshape(torch.tensor(trainer.reset()['board'])))[0])
             writer.add_text('first_qs', firstStep, e)
         if e % 500 == 0:
-            trainer.save("model_state_discount_" + str(discount) + '_useStreak_' + str(useStreak) )
-            print("episode: " + str(e) + " meanReward generateEpisodes: " + str(batchReward) + " meanLoss: " + str(loss))
-            print("steps: " + str(steps))
-            firstStep = str(trainer.policy(trainer.reshape(torch.tensor(trainer.reset()['board'])))[0])
-            with torch.no_grad():
-                print(firstStep)
+            trainer.save("model_state_discount_" + str(discount) + '_useStreak_' + str(useStreak))
+            print(e)
+            # print("episode: " + str(e) + " meanReward generateEpisodes: " + str(batchReward) + " meanLoss: " + str(loss))
+            # print("steps: " + str(steps))
+            # firstStep = str(trainer.policy(trainer.reshape(torch.tensor(trainer.reset()['board'])))[0])
+            # with torch.no_grad():
+            #     print(firstStep)
             evaluator = Evaluator(100, trainer)
             evaluator.winPercentage(e)
 
         # if e % 25000 == 0:
         #     trainer.switch()
         #     trainer.save("model_state_"+str(e))
-run(20000, 0.7, False)
-run(20000, 0.8, False)
-run(20000, 0.9, False)
+    print("--- %s seconds ---" % (time.time() - start_time))
+run(10, 0.7, False)
+run(10, 0.8, False)
+run(10, 0.9, False)
 print("done")

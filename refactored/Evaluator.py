@@ -17,7 +17,7 @@ class Evaluator:
             return action
 
     def winPercentage(self, episode):
-        print("vs " + str(self.trainer.enemy))
+        # print("vs " + str(self.trainer.enemy))
         env = make("connectx", debug=True)
         env.render()
         env.reset()
@@ -30,7 +30,7 @@ class Evaluator:
                                        episode)
         self.trainer.writer.add_scalar('win_percentage_random', np.round(outcomes.count([-1, 1]) / len(outcomes), 2),
                                        episode)
-        print("Agent 1 Win Percentage:", np.round(outcomes.count([1, -1]) / len(outcomes), 2))
-        print("Agent 2 Win Percentage:", np.round(outcomes.count([-1, 1]) / len(outcomes), 2))
-        print("Number of Invalid Plays by Agent 1:", outcomes.count([None, 0]))
-        print("Number of Invalid Plays by Agent 2:", outcomes.count([0, None]))
+        # print("Agent 1 Win Percentage:", np.round(outcomes.count([1, -1]) / len(outcomes), 2))
+        # print("Agent 2 Win Percentage:", np.round(outcomes.count([-1, 1]) / len(outcomes), 2))
+        # print("Number of Invalid Plays by Agent 1:", outcomes.count([None, 0]))
+        # print("Number of Invalid Plays by Agent 2:", outcomes.count([0, None]))
