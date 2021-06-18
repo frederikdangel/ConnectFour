@@ -80,9 +80,13 @@ class Trainer:
 
     def longestVerticalStreak(self, player, reshapedBoard, action):
         count = 0
+        wasZero = False
         for i in range(5, 0, -1):
             if reshapedBoard[0][player][i][action] == 0:
+                wasZero = True
+            if reshapedBoard[0][player][i][action] == 1 & wasZero:
                 count = 0
+                wasZero = False
             count += reshapedBoard[0][player][i][action]
         if reshapedBoard[0][0][0][action] == 0:
             return 0
@@ -90,14 +94,49 @@ class Trainer:
 
     def longestHorizontalStreak(self, player, reshapedBoard, action):
         count = 0
-        rowOfAction = 0
-        for i in range(6):
-            rowOfAction += reshapedBoard[0][player][i][action]
+        rowOfAction = self.rowOfAction(player, reshapedBoard, action)
+        wasZero = False
         for i in range(7):
-            if reshapedBoard[0][player][rowOfAction.item()][i] == 0:
+            if reshapedBoard[0][player][rowOfAction][i] == 0:
+                wasZero = True
+            if reshapedBoard[0][player][rowOfAction][i] == 1 & wasZero:
                 count = 0
-            count += reshapedBoard[0][player][i][action]
+                wasZero = False
+            count += reshapedBoard[0][player][rowOfAction][i]
         return count
+
+    def longestDiagonalStreak(self, player, reshapedBoard, action):
+        rowOfAction = self.rowOfAction(player, reshapedBoard, action)
+        for row in range(4):
+            for col in range(5):
+                if reshapedBoard[0][player][row][col] == reshapedBoard[0][player][row + 1][col + 1] == \
+                        reshapedBoard[0][player][row + 2][col + 2] == 1 and self.actionInDiagonal1(action, row, col,
+                                                                                                   rowOfAction):
+                    return 3
+        for row in range(5, 1, -1):
+            for col in range(4):
+                if reshapedBoard[0][player][row][col] == reshapedBoard[0][player][row - 1][col + 1] == \
+                        reshapedBoard[0][player][row - 2][col + 2] == 1 and self.actionInDiagonal2(action, row, col,
+                                                                                                   rowOfAction):
+                    return 3
+        return 0
+
+    def actionInDiagonal1(self, action, row, col, rowOfAction):
+        return (rowOfAction == row and action == col or
+                rowOfAction == row + 1 and action == col + 1 or
+                rowOfAction == row + 2 and action == col + 2)
+
+    def actionInDiagonal2(self, action, row, col, rowOfAction):
+        return (rowOfAction == row and action == col or
+                rowOfAction == row - 1 and action == col + 1 or
+                rowOfAction == row - 2 and action == col + 2)
+
+    def rowOfAction(self, player, reshapedBoard, action):
+        rowOfAction = 10
+        for i in range(6):
+            if reshapedBoard[0][player][i][action] == 1:
+                rowOfAction = min(i, rowOfAction)
+        return rowOfAction
 
     def policyAction(self, board, episode, lastEpisode, minEp=0.1, maxEp=0.9):
         reshaped = self.reshape(torch.tensor(board))
