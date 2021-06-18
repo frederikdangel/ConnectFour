@@ -6,10 +6,11 @@ import torch.optim as optim
 from Model import Net
 from ExperienceBuffer import ExperienceReplay
 from kaggle_environments import make
+from torch.utils.tensorboard import SummaryWriter
 
 
 class Trainer:
-    def __init__(self, hidden_dim, buffer_size, gamma, batch_size, device):
+    def __init__(self, hidden_dim, buffer_size, gamma, batch_size, device, writer):
         self.env = make("connectx", debug=True)
         self.device = device
         self.policy = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
@@ -29,6 +30,8 @@ class Trainer:
         self.batch_size = batch_size
         self.enemy = "random"
         self.first = True
+        self.player = 1
+        self.writer = writer
 
     def switch(self):
         self.trainingPair = self.env.train([None, "negamax"])
@@ -38,8 +41,10 @@ class Trainer:
         self.env.reset()
         if self.first:
             self.trainingPair = self.env.train(["random", None])
+            self.player = 2
         else:
             self.trainingPair = self.env.train([None, "random"])
+            self.player = 1
         self.first = not self.first
 
     def load(self):
@@ -64,7 +69,7 @@ class Trainer:
     def epsilon(self, maxE, minE, episode, lastEpisode):
         return (maxE - minE) * max((lastEpisode - episode) / lastEpisode, 0) + minE
 
-    def change_reward(self, reward, done, board):
+    def change_reward(self, reward, done):
         if done and reward == 1:
             return 10
         if done and reward == -1:
@@ -77,6 +82,31 @@ class Trainer:
             return 1 / 42
         else:
             return reward
+
+    def change_reward_streak(self, reward, done, reshapedBoard, action, useStreak):
+        if done and reward == 1:
+            return 20
+        if done and reward == -1:
+            return -20
+        if reward is None and done:
+            return -40
+        if done:
+            return 1
+        if reward == 0 & useStreak:
+            return 1 / 42 + self.streakReward(self.player, reshapedBoard, action)
+        if reward == 0:
+            return 1/42
+        else:
+            return reward
+
+    def streakReward(self, player, reshapedBoard, action):
+        verticalReward = 0
+        horizontalReward = 0
+        if self.longestVerticalStreak(player, reshapedBoard, action) == 3:
+            verticalReward = 3
+        if self.longestHorizontalStreak(player, reshapedBoard, action) == 3:
+            horizontalReward = 3
+        return verticalReward + horizontalReward + self.longestDiagonalStreak(player, reshapedBoard, action)
 
     def longestVerticalStreak(self, player, reshapedBoard, action):
         count = 0
