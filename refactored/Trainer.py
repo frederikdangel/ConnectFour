@@ -78,6 +78,27 @@ class Trainer:
         else:
             return reward
 
+    def longestVerticalStreak(self, player, reshapedBoard, action):
+        count = 0
+        for i in range(6):
+            if reshapedBoard[0][player][i][action] == 0:
+                count = 0
+            count += reshapedBoard[0][player][i][action]
+        if reshapedBoard[0][0][6][action] == 0:
+            return 0
+        return count
+
+    def longestHorizontalStreak(self, player, reshapedBoard, action):
+        count = 0
+        rowOfAction = 0
+        for i in range(6):
+            rowOfAction += reshapedBoard[0][player][i][action]
+        for i in range(7):
+            if reshapedBoard[0][player][rowOfAction][i] == 0:
+                count = 0
+            count += reshapedBoard[0][player][i][action]
+        return count
+
     def policyAction(self, board, episode, lastEpisode, minEp=0.1, maxEp=0.9):
         reshaped = self.reshape(torch.tensor(board))
         output = self.policy(reshaped).view(-1)

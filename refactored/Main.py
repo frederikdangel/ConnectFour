@@ -12,6 +12,7 @@ experienceSize = 20000
 epsilon_min_after = 1500
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 trainer = Trainer(hidden_dim, experienceSize, discount, batch_size, device)
+
 for e in range(episodes):
     observation = trainer.reset()
     done = False
