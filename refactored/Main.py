@@ -18,6 +18,12 @@ for e in range(episodes):
     done = False
     batchReward = 0
     steps = 0
+# reshaped = trainer.reshape(torch.tensor(observation.board))
+# for i in range(5):
+#     reshaped[0][0][i][0] = 0
+# for i in range(6):
+#     reshaped[0][1][0][i] = 1
+# print(trainer.longestHorizontalStreak(1, reshaped, 0))
     while not done:
         action = trainer.policyAction(observation['board'], e, epsilon_min_after)
         old_obs = observation

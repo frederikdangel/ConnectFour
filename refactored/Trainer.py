@@ -74,17 +74,17 @@ class Trainer:
         if done:
             return 1
         if reward == 0:
-            return 1/42
+            return 1 / 42
         else:
             return reward
 
     def longestVerticalStreak(self, player, reshapedBoard, action):
         count = 0
-        for i in range(6):
+        for i in range(5, 0, -1):
             if reshapedBoard[0][player][i][action] == 0:
                 count = 0
             count += reshapedBoard[0][player][i][action]
-        if reshapedBoard[0][0][6][action] == 0:
+        if reshapedBoard[0][0][0][action] == 0:
             return 0
         return count
 
@@ -94,7 +94,7 @@ class Trainer:
         for i in range(6):
             rowOfAction += reshapedBoard[0][player][i][action]
         for i in range(7):
-            if reshapedBoard[0][player][rowOfAction][i] == 0:
+            if reshapedBoard[0][player][rowOfAction.item()][i] == 0:
                 count = 0
             count += reshapedBoard[0][player][i][action]
         return count
@@ -107,7 +107,7 @@ class Trainer:
     def takeAction(self, actionList: torch.tensor, board, epsilon, train=True):
         if (np.random.random() < epsilon) & train:
             # invalide actions rein=geht nicht
-            #return torch.tensor(np.random.choice(len(actionList))).item()
+            # return torch.tensor(np.random.choice(len(actionList))).item()
             return np.random.choice([i for i in range(len(actionList)) if board[0][0][0][i] == 1])
         else:
             for i in range(7):
@@ -152,4 +152,4 @@ class Trainer:
                 loss.backward()
                 meanLoss += loss
             self.optimizer.step()
-            return meanLoss/self.batch_size
+            return meanLoss / self.batch_size
