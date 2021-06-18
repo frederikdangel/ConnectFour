@@ -28,10 +28,19 @@ class Trainer:
         self.gamma = gamma
         self.batch_size = batch_size
         self.enemy = "random"
+        self.first = True
 
     def switch(self):
         self.trainingPair = self.env.train([None, "negamax"])
         self.enemy = "negamax"
+
+    def switchPosition(self):
+        self.env.reset()
+        if self.first:
+            self.trainingPair = self.env.train(["random", None])
+        else:
+            self.trainingPair = self.env.train([None, "random"])
+        self.first = not self.first
 
     def load(self):
         self.policy.load_state_dict(torch.load("../model_state"))
@@ -65,9 +74,30 @@ class Trainer:
         if done:
             return 1
         if reward == 0:
-            return 1/42
+            return 1 / 42
         else:
             return reward
+
+    def longestVerticalStreak(self, player, reshapedBoard, action):
+        count = 0
+        for i in range(5, 0, -1):
+            if reshapedBoard[0][player][i][action] == 0:
+                count = 0
+            count += reshapedBoard[0][player][i][action]
+        if reshapedBoard[0][0][0][action] == 0:
+            return 0
+        return count
+
+    def longestHorizontalStreak(self, player, reshapedBoard, action):
+        count = 0
+        rowOfAction = 0
+        for i in range(6):
+            rowOfAction += reshapedBoard[0][player][i][action]
+        for i in range(7):
+            if reshapedBoard[0][player][rowOfAction.item()][i] == 0:
+                count = 0
+            count += reshapedBoard[0][player][i][action]
+        return count
 
     def policyAction(self, board, episode, lastEpisode, minEp=0.1, maxEp=0.9):
         reshaped = self.reshape(torch.tensor(board))
@@ -77,7 +107,7 @@ class Trainer:
     def takeAction(self, actionList: torch.tensor, board, epsilon, train=True):
         if (np.random.random() < epsilon) & train:
             # invalide actions rein=geht nicht
-            #return torch.tensor(np.random.choice(len(actionList))).item()
+            # return torch.tensor(np.random.choice(len(actionList))).item()
             return np.random.choice([i for i in range(len(actionList)) if board[0][0][0][i] == 1])
         else:
             for i in range(7):
@@ -122,4 +152,4 @@ class Trainer:
                 loss.backward()
                 meanLoss += loss
             self.optimizer.step()
-            return meanLoss/self.batch_size
+            return meanLoss / self.batch_size
