@@ -16,8 +16,8 @@ class Evaluator:
             action = self.trainer.takeAction(self.trainer.policy(reshaped).view(-1), reshaped, 0, False)
             return action
 
-    def winPercentage(self):
-        print("vs " + str(self.trainer.enemy))
+    def winPercentage(self, episode):
+        # print("vs " + str(self.trainer.enemy))
         env = make("connectx", debug=True)
         env.render()
         env.reset()
@@ -26,7 +26,11 @@ class Evaluator:
         # Agent 2 goes first (roughly) half the time
         outcomes += [[b, a] for [a, b] in
                      evaluate("connectx", [self.trainer.enemy, self.agent], config, [], self.rounds - self.rounds // 2)]
-        print("Agent 1 Win Percentage:", np.round(outcomes.count([1, -1]) / len(outcomes), 2))
-        print("Agent 2 Win Percentage:", np.round(outcomes.count([-1, 1]) / len(outcomes), 2))
-        print("Number of Invalid Plays by Agent 1:", outcomes.count([None, 0]))
-        print("Number of Invalid Plays by Agent 2:", outcomes.count([0, None]))
+        self.trainer.writer.add_scalar('win_percentage_agent', np.round(outcomes.count([1, -1]) / len(outcomes), 2),
+                                       episode)
+        self.trainer.writer.add_scalar('win_percentage_random', np.round(outcomes.count([-1, 1]) / len(outcomes), 2),
+                                       episode)
+        # print("Agent 1 Win Percentage:", np.round(outcomes.count([1, -1]) / len(outcomes), 2))
+        # print("Agent 2 Win Percentage:", np.round(outcomes.count([-1, 1]) / len(outcomes), 2))
+        # print("Number of Invalid Plays by Agent 1:", outcomes.count([None, 0]))
+        # print("Number of Invalid Plays by Agent 2:", outcomes.count([0, None]))

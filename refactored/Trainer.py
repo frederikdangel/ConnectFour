@@ -6,10 +6,11 @@ import torch.optim as optim
 from refactored.Model import Net
 from refactored.ExperienceBuffer import ExperienceReplay
 from kaggle_environments import make
+from torch.utils.tensorboard import SummaryWriter
 
 
 class Trainer:
-    def __init__(self, hidden_dim, buffer_size, gamma, batch_size, device):
+    def __init__(self, hidden_dim, buffer_size, gamma, batch_size, device, writer):
         self.env = make("connectx", debug=True)
         self.device = device
         self.policy = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
@@ -29,6 +30,8 @@ class Trainer:
         self.batch_size = batch_size
         self.enemy = "random"
         self.first = True
+        self.player = 1
+        self.writer = writer
 
     def switch(self):
         self.trainingPair = self.env.train([None, "negamax"])
@@ -38,8 +41,10 @@ class Trainer:
         self.env.reset()
         if self.first:
             self.trainingPair = self.env.train(["random", None])
+            self.player = 2
         else:
             self.trainingPair = self.env.train([None, "random"])
+            self.player = 1
         self.first = not self.first
 
     def load(self):
@@ -64,7 +69,7 @@ class Trainer:
     def epsilon(self, maxE, minE, episode, lastEpisode):
         return (maxE - minE) * max((lastEpisode - episode) / lastEpisode, 0) + minE
 
-    def change_reward(self, reward, done, board):
+    def change_reward(self, reward, done):
         if done and reward == 1:
             return 10
         if done and reward == -1:
@@ -78,11 +83,40 @@ class Trainer:
         else:
             return reward
 
+    def change_reward_streak(self, reward, done, reshapedBoard, action, useStreak):
+        if done and reward == 1:
+            return 20
+        if done and reward == -1:
+            return -20
+        if reward is None and done:
+            return -40
+        if done:
+            return 1
+        if reward == 0 & useStreak:
+            return 1 / 42 + self.streakReward(self.player, reshapedBoard, action)
+        if reward == 0:
+            return 1/42
+        else:
+            return reward
+
+    def streakReward(self, player, reshapedBoard, action):
+        verticalReward = 0
+        horizontalReward = 0
+        if self.longestVerticalStreak(player, reshapedBoard, action) == 3:
+            verticalReward = 3
+        if self.longestHorizontalStreak(player, reshapedBoard, action) == 3:
+            horizontalReward = 3
+        return verticalReward + horizontalReward + self.longestDiagonalStreak(player, reshapedBoard, action)
+
     def longestVerticalStreak(self, player, reshapedBoard, action):
         count = 0
+        wasZero = False
         for i in range(5, 0, -1):
             if reshapedBoard[0][player][i][action] == 0:
+                wasZero = True
+            if reshapedBoard[0][player][i][action] == 1 & wasZero:
                 count = 0
+                wasZero = False
             count += reshapedBoard[0][player][i][action]
         if reshapedBoard[0][0][0][action] == 0:
             return 0
@@ -90,14 +124,49 @@ class Trainer:
 
     def longestHorizontalStreak(self, player, reshapedBoard, action):
         count = 0
-        rowOfAction = 0
-        for i in range(6):
-            rowOfAction += reshapedBoard[0][player][i][action]
+        rowOfAction = self.rowOfAction(player, reshapedBoard, action)
+        wasZero = False
         for i in range(7):
-            if reshapedBoard[0][player][rowOfAction.item()][i] == 0:
+            if reshapedBoard[0][player][rowOfAction][i] == 0:
+                wasZero = True
+            if reshapedBoard[0][player][rowOfAction][i] == 1 & wasZero:
                 count = 0
-            count += reshapedBoard[0][player][i][action]
+                wasZero = False
+            count += reshapedBoard[0][player][rowOfAction][i]
         return count
+
+    def longestDiagonalStreak(self, player, reshapedBoard, action):
+        rowOfAction = self.rowOfAction(player, reshapedBoard, action)
+        for row in range(4):
+            for col in range(5):
+                if reshapedBoard[0][player][row][col] == reshapedBoard[0][player][row + 1][col + 1] == \
+                        reshapedBoard[0][player][row + 2][col + 2] == 1 and self.actionInDiagonal1(action, row, col,
+                                                                                                   rowOfAction):
+                    return 3
+        for row in range(5, 1, -1):
+            for col in range(4):
+                if reshapedBoard[0][player][row][col] == reshapedBoard[0][player][row - 1][col + 1] == \
+                        reshapedBoard[0][player][row - 2][col + 2] == 1 and self.actionInDiagonal2(action, row, col,
+                                                                                                   rowOfAction):
+                    return 3
+        return 0
+
+    def actionInDiagonal1(self, action, row, col, rowOfAction):
+        return (rowOfAction == row and action == col or
+                rowOfAction == row + 1 and action == col + 1 or
+                rowOfAction == row + 2 and action == col + 2)
+
+    def actionInDiagonal2(self, action, row, col, rowOfAction):
+        return (rowOfAction == row and action == col or
+                rowOfAction == row - 1 and action == col + 1 or
+                rowOfAction == row - 2 and action == col + 2)
+
+    def rowOfAction(self, player, reshapedBoard, action):
+        rowOfAction = 10
+        for i in range(6):
+            if reshapedBoard[0][player][i][action] == 1:
+                rowOfAction = min(i, rowOfAction)
+        return rowOfAction
 
     def policyAction(self, board, episode, lastEpisode, minEp=0.1, maxEp=0.9):
         reshaped = self.reshape(torch.tensor(board))
