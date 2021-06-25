@@ -1,5 +1,10 @@
+print("__file__", __file__)
 from unittest import TestCase
+import refactored
+from refactored.Model import Net
 from refactored.Trainer import Trainer
+
+
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.cuda

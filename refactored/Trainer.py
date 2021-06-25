@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from Model import Net
-from ExperienceBuffer import ExperienceReplay
+from refactored.Model import Net
+from refactored.ExperienceBuffer import ExperienceReplay
 from kaggle_environments import make
 
 

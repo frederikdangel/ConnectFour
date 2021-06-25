@@ -1,5 +1,6 @@
+import sys
 from unittest import TestCase
-from refactored.ExperienceBuffer import *
+from refactored.ExperienceBuffer import Experience, ExperienceReplay
 import torch
 
 
