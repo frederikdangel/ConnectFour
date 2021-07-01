@@ -20,18 +20,30 @@ class Trainer:
         self.target = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
                           self.env.configuration.columns).to(
             device)
+        self.enemyNet = Net(self.env.configuration.columns * self.env.configuration.rows, hidden_dim,
+                            self.env.configuration.columns).to(
+            device)
+        # self.enemyNet.load_state_dict(torch.load("../runs/model_state_discount_0.8_useStreak_True"))
         self.target.load_state_dict(self.policy.state_dict())
         self.target.eval()
         self.buffer = ExperienceReplay(buffer_size)
-        self.trainingPair = self.env.train([None, "random"])
+        self.enemy = "random"
+        self.trainingPair = self.env.train([None, self.enemy])
         self.loss_function = nn.MSELoss()
         self.optimizer = optim.Adam(params=self.policy.parameters(), lr=0.001)
         self.gamma = gamma
         self.batch_size = batch_size
-        self.enemy = "random"
+
         self.first = True
         self.player = 1
         self.writer = writer
+
+    def agent(self, observation, configuration):
+        with torch.no_grad():
+            state = torch.tensor(observation['board'], dtype=torch.float)
+            reshaped = self.reshape(state)
+            action = self.takeAction(self.enemyNet(reshaped).view(-1), reshaped, 0, False)
+            return action
 
     def switch(self):
         self.trainingPair = self.env.train([None, "negamax"])
@@ -40,15 +52,15 @@ class Trainer:
     def switchPosition(self):
         self.env.reset()
         if self.first:
-            self.trainingPair = self.env.train(["random", None])
+            self.trainingPair = self.env.train([self.enemy, None])
             self.player = 2
         else:
-            self.trainingPair = self.env.train([None, "random"])
+            self.trainingPair = self.env.train([None, self.enemy])
             self.player = 1
         self.first = not self.first
 
-    def load(self):
-        self.policy.load_state_dict(torch.load("../model_state"))
+    def load(self, path):
+        self.policy.load_state_dict(torch.load(path))
 
     def synchronize(self):
         self.target.load_state_dict(self.policy.state_dict())
@@ -95,7 +107,7 @@ class Trainer:
         if reward == 0 & useStreak:
             return 1 / 42 + self.streakReward(self.player, reshapedBoard, action)
         if reward == 0:
-            return 1/42
+            return 1 / 42
         else:
             return reward
 
@@ -176,7 +188,7 @@ class Trainer:
     def takeAction(self, actionList: torch.tensor, board, epsilon, train=True):
         if (np.random.random() < epsilon) & train:
             # invalide actions rein=geht nicht
-            # return torch.tensor(np.random.choice(len(actionList))).item()
+            #return torch.tensor(np.random.choice(len(actionList))).item()
             return np.random.choice([i for i in range(len(actionList)) if board[0][0][0][i] == 1])
         else:
             for i in range(7):

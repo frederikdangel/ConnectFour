@@ -26,11 +26,11 @@ class Evaluator:
         # Agent 2 goes first (roughly) half the time
         outcomes += [[b, a] for [a, b] in
                      evaluate("connectx", [self.trainer.enemy, self.agent], config, [], self.rounds - self.rounds // 2)]
-        self.trainer.writer.add_scalar('win_percentage_agent', np.round(outcomes.count([1, -1]) / len(outcomes), 2),
-                                       episode)
-        self.trainer.writer.add_scalar('win_percentage_random', np.round(outcomes.count([-1, 1]) / len(outcomes), 2),
-                                       episode)
-        # print("Agent 1 Win Percentage:", np.round(outcomes.count([1, -1]) / len(outcomes), 2))
-        # print("Agent 2 Win Percentage:", np.round(outcomes.count([-1, 1]) / len(outcomes), 2))
-        # print("Number of Invalid Plays by Agent 1:", outcomes.count([None, 0]))
-        # print("Number of Invalid Plays by Agent 2:", outcomes.count([0, None]))
+        # self.trainer.writer.add_scalar('win_percentage_agent', np.round(outcomes.count([1, -1]) / len(outcomes), 2),
+        #                                episode)
+        # self.trainer.writer.add_scalar('win_percentage_random', np.round(outcomes.count([-1, 1]) / len(outcomes), 2),
+        #                                episode)
+        print("Agent 1 Win Percentage:", np.round(outcomes.count([1, -1]) / len(outcomes), 2))
+        print("Agent 2 Win Percentage:", np.round(outcomes.count([-1, 1]) / len(outcomes), 2))
+        print("Number of Invalid Plays by Agent 1:", outcomes.count([None, 0]))
+        print("Number of Invalid Plays by Agent 2:", outcomes.count([0, None]))

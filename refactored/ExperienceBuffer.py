@@ -15,7 +15,7 @@ class ExperienceReplay:
 
     def append(self, experience):
         if len(self.buffer) >= self.capacity:
-            self.buffer.pop()
+            self.buffer.pop(0)
         self.buffer.append(experience)
 
     def sample(self, batch_size, device):

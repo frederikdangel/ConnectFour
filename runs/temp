@@ -1,1 +1,68 @@
+negamax:
+Agent 1 Win Percentage: 0.02
+Agent 2 Win Percentage: 0.96
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.07
+Agent 2 Win Percentage: 0.91
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.04
+Agent 2 Win Percentage: 0.95
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.07
+Agent 2 Win Percentage: 0.93
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.07
+Agent 2 Win Percentage: 0.93
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.02
+Agent 2 Win Percentage: 0.97
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
 
+
+random:
+Agent 1 Win Percentage: 0.92
+Agent 2 Win Percentage: 0.08
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.87
+Agent 2 Win Percentage: 0.13
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.65
+Agent 2 Win Percentage: 0.35
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.94
+Agent 2 Win Percentage: 0.06
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.89
+Agent 2 Win Percentage: 0.11
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+Agent 1 Win Percentage: 0.72
+Agent 2 Win Percentage: 0.28
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+
+
+trainer.load("../runs/model_state_discount_0.7_useStreak_False")
+
+trainer.load("../runs/model_state_discount_0.8_useStreak_False")
+
+trainer.load("../runs/model_state_discount_0.9_useStreak_False")
+
+
+trainer.load("../runs/model_state_discount_0.7_useStreak_True")
+
+
+trainer.load("../runs/model_state_discount_0.8_useStreak_True")
+
+
+trainer.load("../runs/model_state_discount_0.9_useStreak_True")
