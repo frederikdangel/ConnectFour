@@ -1,0 +1,146 @@
+C:\Users\jomer\anaconda3\python.exe C:/Users/jomer/Dokumente/workspace/Projekt/refactored/Main.py
+Loading environment football failed: No module named 'gfootball'
+runs_04_27_06/model_state_discount_0.4_useStreak_True
+Agent 1 Win Percentage: 0.03
+Agent 2 Win Percentage: 0.73
+Number of Invalid Plays by Agent 1: 24
+Number of Invalid Plays by Agent 2: 0
+runs_04_27_06/model_state_discount_0.5_useStreak_True
+Agent 1 Win Percentage: 0.03
+Agent 2 Win Percentage: 0.86
+Number of Invalid Plays by Agent 1: 11
+Number of Invalid Plays by Agent 2: 0
+runs_04_27_06/model_state_discount_0.6_useStreak_True
+Agent 1 Win Percentage: 0.02
+Agent 2 Win Percentage: 0.74
+Number of Invalid Plays by Agent 1: 24
+Number of Invalid Plays by Agent 2: 0
+runs_04_27_06/model_state_discount_0.7_useStreak_True
+Agent 1 Win Percentage: 0.06
+Agent 2 Win Percentage: 0.81
+Number of Invalid Plays by Agent 1: 13
+Number of Invalid Plays by Agent 2: 0
+runs_04_27_06/model_state_discount_0.8_useStreak_True
+Agent 1 Win Percentage: 0.07
+Agent 2 Win Percentage: 0.89
+Number of Invalid Plays by Agent 1: 4
+Number of Invalid Plays by Agent 2: 0
+runs_04_27_06/model_state_discount_0.9_useStreak_True
+Agent 1 Win Percentage: 0.04
+Agent 2 Win Percentage: 0.78
+Number of Invalid Plays by Agent 1: 18
+Number of Invalid Plays by Agent 2: 0
+runs_04_27_06/model_state_discount_1.0_useStreak_True
+Agent 1 Win Percentage: 0.0
+Agent 2 Win Percentage: 0.82
+Number of Invalid Plays by Agent 1: 18
+Number of Invalid Plays by Agent 2: 0
+runs_04_27_06/model_state_discount_1.0_useStreak_True_invalidActions
+Agent 1 Win Percentage: 0.0
+Agent 2 Win Percentage: 0.94
+Number of Invalid Plays by Agent 1: 6
+Number of Invalid Plays by Agent 2: 0
+
+runs_05_27_06/model_state_discount_0.4_useStreak_False
+Agent 1 Win Percentage: 0.01
+Agent 2 Win Percentage: 0.79
+Number of Invalid Plays by Agent 1: 20
+Number of Invalid Plays by Agent 2: 0
+runs_05_27_06/model_state_discount_0.5_useStreak_False
+Agent 1 Win Percentage: 0.05
+Agent 2 Win Percentage: 0.75
+Number of Invalid Plays by Agent 1: 20
+Number of Invalid Plays by Agent 2: 0
+runs_05_27_06/model_state_discount_0.6_useStreak_False
+Agent 1 Win Percentage: 0.01
+Agent 2 Win Percentage: 0.73
+Number of Invalid Plays by Agent 1: 26
+Number of Invalid Plays by Agent 2: 0
+runs_05_27_06/model_state_discount_0.7_useStreak_False
+Agent 1 Win Percentage: 0.05
+Agent 2 Win Percentage: 0.72
+Number of Invalid Plays by Agent 1: 23
+Number of Invalid Plays by Agent 2: 0
+runs_05_27_06/model_state_discount_0.8_useStreak_False
+Agent 1 Win Percentage: 0.03
+Agent 2 Win Percentage: 0.89
+Number of Invalid Plays by Agent 1: 8
+Number of Invalid Plays by Agent 2: 0
+runs_05_27_06/model_state_discount_0.9_useStreak_False
+Agent 1 Win Percentage: 0.0
+Agent 2 Win Percentage: 0.81
+Number of Invalid Plays by Agent 1: 19
+Number of Invalid Plays by Agent 2: 0
+runs_05_27_06/model_state_discount_1.0_useStreak_False
+Agent 1 Win Percentage: 0.0
+Agent 2 Win Percentage: 0.59
+Number of Invalid Plays by Agent 1: 41
+Number of Invalid Plays by Agent 2: 0
+runs_04_27_06/model_state_discount_1.0_useStreak_False_invalidActions
+Agent 1 Win Percentage: 0.0
+Agent 2 Win Percentage: 0.99
+Number of Invalid Plays by Agent 1: 1
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.4_useStreak_False
+Agent 1 Win Percentage: 0.03
+Agent 2 Win Percentage: 0.69
+Number of Invalid Plays by Agent 1: 28
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.4_useStreak_True
+Agent 1 Win Percentage: 0.1
+Agent 2 Win Percentage: 0.78
+Number of Invalid Plays by Agent 1: 12
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.5_useStreak_False
+Agent 1 Win Percentage: 0.01
+Agent 2 Win Percentage: 0.7
+Number of Invalid Plays by Agent 1: 29
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.5_useStreak_True
+Agent 1 Win Percentage: 0.05
+Agent 2 Win Percentage: 0.63
+Number of Invalid Plays by Agent 1: 32
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.6_useStreak_False
+Agent 1 Win Percentage: 0.0
+Agent 2 Win Percentage: 0.69
+Number of Invalid Plays by Agent 1: 31
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.6_useStreak_True
+Agent 1 Win Percentage: 0.06
+Agent 2 Win Percentage: 0.74
+Number of Invalid Plays by Agent 1: 20
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.7_useStreak_False
+Agent 1 Win Percentage: 0.01
+Agent 2 Win Percentage: 0.93
+Number of Invalid Plays by Agent 1: 6
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.7_useStreak_True
+Agent 1 Win Percentage: 0.02
+Agent 2 Win Percentage: 0.87
+Number of Invalid Plays by Agent 1: 11
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.8_useStreak_False
+Agent 1 Win Percentage: 0.01
+Agent 2 Win Percentage: 0.47
+Number of Invalid Plays by Agent 1: 52
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.8_useStreak_True
+Agent 1 Win Percentage: 0.06
+Agent 2 Win Percentage: 0.8
+Number of Invalid Plays by Agent 1: 14
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.9_useStreak_False
+Agent 1 Win Percentage: 0.01
+Agent 2 Win Percentage: 0.75
+Number of Invalid Plays by Agent 1: 24
+Number of Invalid Plays by Agent 2: 0
+run_fail/run_fail/model_state_discount_0.9_useStreak_True
+Agent 1 Win Percentage: 0.02
+Agent 2 Win Percentage: 0.81
+Number of Invalid Plays by Agent 1: 17
+Number of Invalid Plays by Agent 2: 0
+done
+
+Process finished with exit code 0
